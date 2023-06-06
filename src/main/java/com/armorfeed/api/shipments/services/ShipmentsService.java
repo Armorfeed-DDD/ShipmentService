@@ -2,6 +2,7 @@ package com.armorfeed.api.shipments.services;
 
 import com.armorfeed.api.shipments.domain.entities.Shipment;
 import com.armorfeed.api.shipments.domain.enums.ShipmentStatus;
+import com.armorfeed.api.shipments.providers.feignclients.VehiclesServiceFeignClient;
 import com.armorfeed.api.shipments.repositories.ShipmentRepository;
 import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
 import com.armorfeed.api.shipments.security.FeignRequestInterceptor;
@@ -26,17 +27,28 @@ public class ShipmentsService {
     @Autowired
     FeignRequestInterceptor feignRequestInterceptor;
 
+    @Autowired
+    VehiclesServiceFeignClient vehiclesServiceFeignClient;
+
     public void Save(Shipment shipment) { shipmentRepository.save(shipment);}
 
     public ResponseEntity<?> updateShipment(UpdateShipmentResource updateShipmentResource, String bearerToken) {
-        feignRequestInterceptor.setBearerToken(bearerToken);
+
         Optional<Shipment> shipmentResult = shipmentRepository.findById(updateShipmentResource.getId());
         if(shipmentResult.isEmpty()) {
             log.info("Shipment with id {} does not exist", updateShipmentResource.getId());
             return ResponseEntity.badRequest().body("Shipment with given id does not exist");
         }
+
         Shipment currentShipment = shipmentResult.get();
         log.info("A shipment with id {} was found", currentShipment.getId());
+
+        // Le pasamos el token al feign client
+        feignRequestInterceptor.setBearerToken(bearerToken);
+        if(vehiclesServiceFeignClient.isValidVehicleId(updateShipmentResource.getVehicle_id()) == false) {
+            log.info("Vehicle with id {} does not exist", updateShipmentResource.getVehicle_id());
+            return ResponseEntity.badRequest().body("Vehicle with given vehicle id does not exist");
+        }
 
         currentShipment.setStatus(ShipmentStatus.valueOf(updateShipmentResource.getStatus()));
         currentShipment.setVehicle_id(updateShipmentResource.getVehicle_id());

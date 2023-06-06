@@ -13,5 +13,4 @@ public interface UsersServiceFeignClient {
     @GetMapping("/api/v1/users/auth/validate-enterprise/{enterpriseId}")
     public boolean validateEnterprise(@PathVariable("enterpriseId") Long enterpriseId);
 
-
 }
