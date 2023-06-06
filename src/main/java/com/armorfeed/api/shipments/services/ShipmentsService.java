@@ -4,6 +4,7 @@ import com.armorfeed.api.shipments.domain.entities.Shipment;
 import com.armorfeed.api.shipments.domain.enums.ShipmentStatus;
 import com.armorfeed.api.shipments.repositories.ShipmentRepository;
 import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
+import com.armorfeed.api.shipments.security.FeignRequestInterceptor;
 import com.armorfeed.api.shipments.shared.mapping.EnhancedModelMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,13 @@ public class ShipmentsService {
     @Autowired
     EnhancedModelMapper enhancedModelMapper;
 
+    @Autowired
+    FeignRequestInterceptor feignRequestInterceptor;
+
     public void Save(Shipment shipment) { shipmentRepository.save(shipment);}
 
-    public ResponseEntity<?> updateShipment(UpdateShipmentResource updateShipmentResource) {
+    public ResponseEntity<?> updateShipment(UpdateShipmentResource updateShipmentResource, String bearerToken) {
+        feignRequestInterceptor.setBearerToken(bearerToken);
         Optional<Shipment> shipmentResult = shipmentRepository.findById(updateShipmentResource.getId());
         if(shipmentResult.isEmpty()) {
             log.info("Shipment with id {} does not exist", updateShipmentResource.getId());

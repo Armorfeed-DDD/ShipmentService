@@ -23,7 +23,8 @@ public class ShipmentController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateShipment(@RequestBody UpdateShipmentResource updateShipmentResource) {
-        return this.shipmentsService.updateShipment(updateShipmentResource);
+    public ResponseEntity<?> updateShipment(@RequestHeader("Authorization") String bearerToken, @RequestBody UpdateShipmentResource updateShipmentResource) {
+
+        return this.shipmentsService.updateShipment(updateShipmentResource, bearerToken);
     }
 }
