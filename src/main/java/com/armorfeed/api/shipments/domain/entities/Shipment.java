@@ -3,6 +3,9 @@ package com.armorfeed.api.shipments.domain.entities;
 import lombok.*;
 
 import javax.persistence.*;
+
+import com.armorfeed.api.shipments.domain.enums.ShipmentStatus;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,8 +32,9 @@ public class Shipment implements Serializable {
     @Column(nullable = false)
     private Date delivery_date;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private Long status;
+    private ShipmentStatus status;
 
     @Column(nullable = false)
     private Long price;
