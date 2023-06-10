@@ -1,9 +1,12 @@
 package com.armorfeed.api.shipments.controller;
 
 import com.armorfeed.api.shipments.domain.entities.Shipment;
+import com.armorfeed.api.shipments.resources.PatchShipmentVehicleIdResource;
+import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
 import com.armorfeed.api.shipments.services.ShipmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,5 +33,16 @@ public class ShipmentController {
     @GetMapping("/customers/{users_customer_id}")
     public List<Shipment> getShipmentByUsersCustomerId(@PathVariable Long users_customer_id){
         return shipmentsService.getShipmentsByUsersCustomerId(users_customer_id);
+    }
+    
+    @PatchMapping
+    public ResponseEntity<?> updateShipment(@RequestHeader("Authorization") String bearerToken, @RequestBody UpdateShipmentResource updateShipmentResource) {
+
+        return this.shipmentsService.updateShipment(updateShipmentResource, bearerToken);
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<?> patchShimpentVehicleId(@RequestHeader("Autorization") String bearerToken, @PathVariable Long shipmentId, @RequestBody PatchShipmentVehicleIdResource patchShipmentVehicleIdResource){
+        return shipmentsService.patchShipmentVehicleId(patchShipmentVehicleIdResource, shipmentId, bearerToken);
     }
 }
