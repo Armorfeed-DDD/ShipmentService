@@ -3,8 +3,6 @@ package com.armorfeed.api.shipments.security;
 import com.armorfeed.api.shipments.providers.feignclients.UsersServiceFeignClient;
 import com.armorfeed.api.shipments.providers.feignclients.dtos.AuthTokenResponse;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
