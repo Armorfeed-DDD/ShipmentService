@@ -8,16 +8,16 @@ import com.armorfeed.api.shipments.resources.PatchShipmentVehicleIdResource;
 import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
 import com.armorfeed.api.shipments.security.FeignRequestInterceptor;
 import com.armorfeed.api.shipments.shared.mapping.EnhancedModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class ShipmentsService {
@@ -67,6 +67,17 @@ public class ShipmentsService {
         log.info("shipment was updated successfully");
         return ResponseEntity.ok().body(updatedShipment);
     }
+    public ResponseEntity<String> deleteShipment(Long shipmentId) {
+        if(shipmentRepository.findById(shipmentId).isPresent()){
+            shipmentRepository.deleteById(shipmentId);
+            return ResponseEntity.ok("Shipment Eliminated");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Shipment with the given id was not found");
+        }
+    }
+
+    
 
     public ResponseEntity<?> patchShipmentVehicleId(PatchShipmentVehicleIdResource request, Long shipmentId, String bearerToken) {
 

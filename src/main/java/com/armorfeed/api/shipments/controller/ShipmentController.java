@@ -4,13 +4,20 @@ import com.armorfeed.api.shipments.domain.entities.Shipment;
 import com.armorfeed.api.shipments.resources.PatchShipmentVehicleIdResource;
 import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
 import com.armorfeed.api.shipments.services.ShipmentsService;
+
+import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("api/v1/shipments/")
 public class ShipmentController {
@@ -36,13 +43,32 @@ public class ShipmentController {
     }
     
     @PatchMapping
-    public ResponseEntity<?> updateShipment(@RequestHeader("Authorization") String bearerToken, @RequestBody UpdateShipmentResource updateShipmentResource) {
-
+    public ResponseEntity<?> updateShipment(
+        @RequestBody @Valid UpdateShipmentResource updateShipmentResource,
+        BindingResult bindingResult,
+        @RequestHeader("Authorization") String bearerToken
+        ) {
+        if(bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map((error) -> error.getDefaultMessage()).toList());
+        }
+        log.info("Bearer token is {}", bearerToken);
         return this.shipmentsService.updateShipment(updateShipmentResource, bearerToken);
     }
+    @DeleteMapping("{shipmentId}")
+    public ResponseEntity<String>Delete(@PathVariable("shipmentId")Long shipmentId){
+        return shipmentsService.deleteShipment(shipmentId);
+    }
 
-    @PatchMapping("{id}")
-    public ResponseEntity<?> patchShimpentVehicleId(@RequestHeader("Autorization") String bearerToken, @PathVariable Long shipmentId, @RequestBody PatchShipmentVehicleIdResource patchShipmentVehicleIdResource){
+    @PatchMapping("set-vehicle/{shipmentId}")
+    public ResponseEntity<?> patchShimpentVehicleId(
+        @RequestHeader("Autorization") String bearerToken,
+        @PathVariable("shipmentId") Long shipmentId,
+        @RequestBody @Valid PatchShipmentVehicleIdResource patchShipmentVehicleIdResource,
+        BindingResult bindingResult
+        ){
+        if(bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map((error) -> error.getDefaultMessage()).toList());
+        }
         return shipmentsService.patchShipmentVehicleId(patchShipmentVehicleIdResource, shipmentId, bearerToken);
     }
 }
