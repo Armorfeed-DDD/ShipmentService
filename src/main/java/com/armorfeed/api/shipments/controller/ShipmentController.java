@@ -48,6 +48,7 @@ public class ShipmentController {
     @DeleteMapping("{shipmentId}")
     public ResponseEntity<String>Delete(@PathVariable("shipmentId")Long shipmentId){
         return shipmentsService.deleteShipment(shipmentId);
+    }
 
     @PatchMapping("set-vehicle/{shipmentId}")
     public ResponseEntity<?> patchShimpentVehicleId(
