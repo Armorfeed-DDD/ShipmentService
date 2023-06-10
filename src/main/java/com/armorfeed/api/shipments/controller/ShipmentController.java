@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -26,10 +27,8 @@ public class ShipmentController {
     ShipmentsService shipmentsService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Shipment saveShipment(@RequestBody Shipment shipment){
-        shipmentsService.Save(shipment);
-        return shipment;
+    public ResponseEntity<?> saveShipment(@RequestBody Shipment shipment){
+        return shipmentsService.save(shipment);
     }
 
     @GetMapping("/enterprises/{users_enterprise_id}")
@@ -49,7 +48,7 @@ public class ShipmentController {
         @RequestHeader("Authorization") String bearerToken
         ) {
         if(bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map((error) -> error.getDefaultMessage()).toList());
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map((error) -> error.getDefaultMessage()).collect(Collectors.toList()));
         }
         log.info("Bearer token is {}", bearerToken);
         return this.shipmentsService.updateShipment(updateShipmentResource, bearerToken);
@@ -67,7 +66,7 @@ public class ShipmentController {
         BindingResult bindingResult
         ){
         if(bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map((error) -> error.getDefaultMessage()).toList());
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map((error) -> error.getDefaultMessage()).collect(Collectors.toList()));
         }
         return shipmentsService.patchShipmentVehicleId(patchShipmentVehicleIdResource, shipmentId, bearerToken);
     }

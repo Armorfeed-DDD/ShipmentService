@@ -55,9 +55,9 @@ public class Shipment implements Serializable {
     @Column
     private Long vehicle_id;
 
-    @Column(nullable = false)
-    private Long users_enterprise_id;
+    @Column(nullable = false, name = "users_enterprise_id")
+    private Long enterpriseId;
 
-    @Column(nullable = false)
-    private Long users_customer_id;
+    @Column(nullable = false, name = "users_customer_id")
+    private Long customerId;
 }

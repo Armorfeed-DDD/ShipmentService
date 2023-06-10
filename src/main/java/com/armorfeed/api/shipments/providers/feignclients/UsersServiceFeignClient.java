@@ -11,6 +11,9 @@ public interface UsersServiceFeignClient {
     public AuthTokenResponse validateToken(@PathVariable("token") String token);
 
     @GetMapping("/api/v1/users/auth/validate-enterprise/{enterpriseId}")
-    public boolean validateEnterprise(@PathVariable("enterpriseId") Long enterpriseId);
+    public boolean validateEnterpriseId(@PathVariable("enterpriseId") Long enterpriseId);
+
+    @GetMapping("/api/v1/users/auth/validate-customer/{customerId}")
+    public boolean validateCustomerId(@PathVariable("customerId") Long customerId);
 
 }

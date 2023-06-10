@@ -2,6 +2,7 @@ package com.armorfeed.api.shipments.services;
 
 import com.armorfeed.api.shipments.domain.entities.Shipment;
 import com.armorfeed.api.shipments.domain.enums.ShipmentStatus;
+import com.armorfeed.api.shipments.providers.feignclients.UsersServiceFeignClient;
 import com.armorfeed.api.shipments.providers.feignclients.VehiclesServiceFeignClient;
 import com.armorfeed.api.shipments.repositories.ShipmentRepository;
 import com.armorfeed.api.shipments.resources.PatchShipmentVehicleIdResource;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,16 +33,35 @@ public class ShipmentsService {
     FeignRequestInterceptor feignRequestInterceptor;
 
     @Autowired
+    UsersServiceFeignClient usersServiceFeignClient;
+
+    @Autowired
     VehiclesServiceFeignClient vehiclesServiceFeignClient;
 
-    public void Save(Shipment shipment) { shipmentRepository.save(shipment);}
+    public ResponseEntity<?> save(Shipment shipment) {
+        List<String> errors = new LinkedList<>();
+        if(usersServiceFeignClient.validateCustomerId(shipment.getCustomerId()) == false) {
+            errors.add("Customer with id " + shipment.getCustomerId() + " does not exist");
+            log.info("Customer with id {} does not exist", shipment.getCustomerId());
+        }
+        if(usersServiceFeignClient.validateEnterpriseId(shipment.getEnterpriseId()) == false) {
+            errors.add("Enterprise with id " + shipment.getEnterpriseId() + " does not exist");
+            log.info("Enterprise with id {} does not exist", shipment.getEnterpriseId());
+        }
+        if(errors.isEmpty() == false) {
+            return ResponseEntity.badRequest().body(errors);
+        }
+        Shipment newShipment = shipmentRepository.save(shipment);
+        log.info("New shipment was successfully created");
+        return ResponseEntity.ok().body(newShipment);
+    }
 
     public List<Shipment> getShipmentsByUsersEnterpriseId(Long users_enterprise_id){
-        return shipmentRepository.findByUsersEnterpriseId(users_enterprise_id);
+        return shipmentRepository.findByEnterpriseId(users_enterprise_id);
     }
 
     public List<Shipment> getShipmentsByUsersCustomerId(Long users_customer_id){
-        return shipmentRepository.findByUsersCustomerId(users_customer_id);
+        return shipmentRepository.findByCustomerId(users_customer_id);
     }
     public ResponseEntity<?> updateShipment(UpdateShipmentResource updateShipmentResource, String bearerToken) {
 

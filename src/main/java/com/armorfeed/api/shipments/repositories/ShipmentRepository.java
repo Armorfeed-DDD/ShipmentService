@@ -6,9 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ShipmentRepository extends JpaRepository<Shipment,Long> {
-
-    List<Shipment> findByUsersEnterpriseId(Long users_enterprise_id);
-
-    List<Shipment> findByUsersCustomerId(Long users_customer_id);
-
+    List<Shipment> findByCustomerId(Long customerId);
+    List<Shipment> findByEnterpriseId(Long enterpriseId);
 }
