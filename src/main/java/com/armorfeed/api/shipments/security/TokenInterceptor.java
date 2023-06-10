@@ -2,12 +2,16 @@ package com.armorfeed.api.shipments.security;
 
 import com.armorfeed.api.shipments.providers.feignclients.UsersServiceFeignClient;
 import com.armorfeed.api.shipments.providers.feignclients.dtos.AuthTokenResponse;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Slf4j
 public class TokenInterceptor implements HandlerInterceptor {
 
     @Autowired
@@ -16,6 +20,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+        log.info("URI is {}", request.getRequestURI());
         if(request.getRequestURI().equals("/swagger-ui/index.html")) {
             return true;
         }
