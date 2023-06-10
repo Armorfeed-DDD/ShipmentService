@@ -1,6 +1,7 @@
 package com.armorfeed.api.shipments.controller;
 
 import com.armorfeed.api.shipments.domain.entities.Shipment;
+import com.armorfeed.api.shipments.resources.PatchShipmentVehicleIdResource;
 import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
 import com.armorfeed.api.shipments.services.ShipmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,10 @@ public class ShipmentController {
     public ResponseEntity<?> updateShipment(@RequestHeader("Authorization") String bearerToken, @RequestBody UpdateShipmentResource updateShipmentResource) {
 
         return this.shipmentsService.updateShipment(updateShipmentResource, bearerToken);
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<?> patchShimpentVehicleId(@RequestHeader("Autorization") String bearerToken, @PathVariable Long shipmentId, @RequestBody PatchShipmentVehicleIdResource patchShipmentVehicleIdResource){
+        return shipmentsService.patchShipmentVehicleId(patchShipmentVehicleIdResource, shipmentId, bearerToken);
     }
 }
