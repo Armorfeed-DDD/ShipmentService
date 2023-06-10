@@ -19,7 +19,7 @@ public class FeignRequestInterceptor implements RequestInterceptor {
         if("users-service".equals(feignClientName)) {
             return;
         }
-        template.header("Authorization", "Bearer " + bearerToken);
+        template.header("Authorization", bearerToken);
     }
     
 }
