@@ -6,12 +6,15 @@ import com.armorfeed.api.shipments.services.ShipmentsService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.stream.Collectors;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -35,8 +38,9 @@ public class ShipmentController {
         BindingResult bindingResult,
         @RequestHeader("Authorization") String bearerToken
         ) {
-        if(bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        if(bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map((error) -> error.getDefaultMessage()).toList());
+        }
         log.info("Bearer token is {}", bearerToken);
         return this.shipmentsService.updateShipment(updateShipmentResource, bearerToken);
     }
