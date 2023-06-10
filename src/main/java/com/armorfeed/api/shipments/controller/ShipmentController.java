@@ -1,7 +1,6 @@
 package com.armorfeed.api.shipments.controller;
 
 import com.armorfeed.api.shipments.domain.entities.Shipment;
-import com.armorfeed.api.shipments.repositories.ShipmentRepository;
 import com.armorfeed.api.shipments.services.ShipmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,12 +22,12 @@ public class ShipmentController {
         return shipment;
     }
 
-    @GetMapping("/shipments/{users_enterprise_id}")
+    @GetMapping("/enterprises/{users_enterprise_id}")
     public List<Shipment> getShipmentsByUsersEnterpriseId(@PathVariable Long users_enterprise_id){
         return shipmentsService.getShipmentsByUsersEnterpriseId(users_enterprise_id);
     }
 
-    @GetMapping("/shipment/{users_customer_id}")
+    @GetMapping("/customers/{users_customer_id}")
     public List<Shipment> getShipmentByUsersCustomerId(@PathVariable Long users_customer_id){
         return shipmentsService.getShipmentsByUsersCustomerId(users_customer_id);
     }
