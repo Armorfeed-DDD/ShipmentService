@@ -9,4 +9,6 @@ public interface ShipmentRepository extends JpaRepository<Shipment,Long> {
 
     List<Shipment> findByUsersEnterpriseId(Long users_enterprise_id);
 
+    List<Shipment> findByUsersCustomerId(Long users_customer_id);
+
 }

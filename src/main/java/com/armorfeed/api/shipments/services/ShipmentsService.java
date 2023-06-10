@@ -21,4 +21,8 @@ public class ShipmentsService {
     public List<Shipment> getShipmentsByUsersEnterpriseId(Long users_enterprise_id){
         return shipmentRepository.findByUsersEnterpriseId(users_enterprise_id);
     }
+
+    public List<Shipment> getShipmentsByUsersCustomerId(Long users_customer_id){
+        return shipmentRepository.findByUsersCustomerId(users_customer_id);
+    }
 }

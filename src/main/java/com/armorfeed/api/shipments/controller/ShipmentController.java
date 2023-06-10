@@ -27,4 +27,9 @@ public class ShipmentController {
     public List<Shipment> getShipmentsByUsersEnterpriseId(@PathVariable Long users_enterprise_id){
         return shipmentsService.getShipmentsByUsersEnterpriseId(users_enterprise_id);
     }
+
+    @GetMapping("/shipment/{users_customer_id}")
+    public List<Shipment> getShipmentByUsersCustomerId(@PathVariable Long users_customer_id){
+        return shipmentsService.getShipmentsByUsersCustomerId(users_customer_id);
+    }
 }
