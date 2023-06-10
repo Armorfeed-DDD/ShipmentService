@@ -1,6 +1,7 @@
 package com.armorfeed.api.shipments.controller;
 
 import com.armorfeed.api.shipments.domain.entities.Shipment;
+import com.armorfeed.api.shipments.resources.PatchShipmentVehicleIdResource;
 import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
 import com.armorfeed.api.shipments.services.ShipmentsService;
 
@@ -47,5 +48,17 @@ public class ShipmentController {
     @DeleteMapping("{shipmentId}")
     public ResponseEntity<String>Delete(@PathVariable("shipmentId")Long shipmentId){
         return shipmentsService.deleteShipment(shipmentId);
+
+    @PatchMapping("set-vehicle/{shipmentId}")
+    public ResponseEntity<?> patchShimpentVehicleId(
+        @RequestHeader("Autorization") String bearerToken,
+        @PathVariable("shipmentId") Long shipmentId,
+        @RequestBody @Valid PatchShipmentVehicleIdResource patchShipmentVehicleIdResource,
+        BindingResult bindingResult
+        ){
+        if(bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map((error) -> error.getDefaultMessage()).toList());
+        }
+        return shipmentsService.patchShipmentVehicleId(patchShipmentVehicleIdResource, shipmentId, bearerToken);
     }
 }

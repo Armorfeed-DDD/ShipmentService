@@ -4,6 +4,7 @@ import com.armorfeed.api.shipments.domain.entities.Shipment;
 import com.armorfeed.api.shipments.domain.enums.ShipmentStatus;
 import com.armorfeed.api.shipments.providers.feignclients.VehiclesServiceFeignClient;
 import com.armorfeed.api.shipments.repositories.ShipmentRepository;
+import com.armorfeed.api.shipments.resources.PatchShipmentVehicleIdResource;
 import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
 import com.armorfeed.api.shipments.security.FeignRequestInterceptor;
 import com.armorfeed.api.shipments.shared.mapping.EnhancedModelMapper;
@@ -68,4 +69,27 @@ public class ShipmentsService {
     }
 
     
+
+    public ResponseEntity<?> patchShipmentVehicleId(PatchShipmentVehicleIdResource request, Long shipmentId, String bearerToken) {
+
+        Optional<Shipment> shipmentResult = shipmentRepository.findById(shipmentId);
+        if(shipmentResult.isEmpty()) {
+            log.info("Shipment with id {} doesn't exist", shipmentId);
+            return ResponseEntity.badRequest().body("Shipment with given id doesn't exist");
+        }
+
+        Shipment currentShipment = shipmentResult.get();
+        log.info("A shipment with id {} was found", currentShipment.getId());
+
+        feignRequestInterceptor.setBearerToken(bearerToken);
+        if (vehiclesServiceFeignClient.isValidVehicleId(request.getVehicleId()) == false) {
+            log.info("Vehicle with id {} doesn't exist", request.getVehicleId());
+            return ResponseEntity.badRequest().body("Vehicle with given vehicle id doesn't exist");
+        }
+        currentShipment.setVehicle_id(request.getVehicleId());
+
+        Shipment patchShipment = shipmentRepository.saveAndFlush(currentShipment);
+        log.info("shipment was updated successfully");
+        return ResponseEntity.ok().body(patchShipment);
+    }
 }
