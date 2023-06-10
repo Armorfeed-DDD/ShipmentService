@@ -33,4 +33,8 @@ public class ShipmentController {
         log.info("Bearer token is {}", bearerToken);
         return this.shipmentsService.updateShipment(updateShipmentResource, bearerToken);
     }
+    @DeleteMapping("{shipmentId}")
+    public ResponseEntity<String>Delete(@PathVariable("shipmentId")Long shipmentId){
+        return shipmentsService.deleteShipment(shipmentId);
+    }
 }
