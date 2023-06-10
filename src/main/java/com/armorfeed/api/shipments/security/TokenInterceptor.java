@@ -24,13 +24,23 @@ public class TokenInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    enum AuthTokenMessage {
+        SUCCESS("Sucessfull authentication");
+        private String message;
+        private AuthTokenMessage(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return this.message;
+        }
+    }
+
     private boolean isValidToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
             AuthTokenResponse authTokenResponse = usersServiceFeignClient.validateToken(token);
-
-            return authTokenResponse.isValidToken();
+            return authTokenResponse.isValidToken() || authTokenResponse.getMessage().equals(AuthTokenMessage.SUCCESS.getMessage());
         }
         return false; // Token no válido o ausente
     }
