@@ -17,7 +17,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        if(request.getRequestURI().startsWith("/swagger-ui/")) {
+        if(request.getRequestURI().startsWith("/swagger-ui/") || request.getRequestURI().startsWith("/api-docs")) {
             return true;
         }
         if (!isValidToken(request)) {
