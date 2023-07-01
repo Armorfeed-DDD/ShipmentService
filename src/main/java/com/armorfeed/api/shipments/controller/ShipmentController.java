@@ -1,6 +1,7 @@
 package com.armorfeed.api.shipments.controller;
 
 import com.armorfeed.api.shipments.domain.entities.Shipment;
+import com.armorfeed.api.shipments.resources.CreateShipmentResource;
 import com.armorfeed.api.shipments.resources.PatchShipmentVehicleIdResource;
 import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
 import com.armorfeed.api.shipments.services.ShipmentsService;
@@ -26,7 +27,16 @@ public class ShipmentController {
     ShipmentsService shipmentsService;
 
     @PostMapping
-    public ResponseEntity<?> saveShipment(@RequestBody Shipment shipment){
+    public ResponseEntity<?> saveShipment(
+        @RequestBody @Valid CreateShipmentResource shipment,
+        BindingResult validationResult
+    ){
+        if(validationResult.hasErrors()) {
+            return ResponseEntity.badRequest()
+            .body(validationResult.getAllErrors()
+            .stream().map((error) -> error.getDefaultMessage())
+            .collect(Collectors.toList()));
+        }
         return shipmentsService.save(shipment);
     }
 

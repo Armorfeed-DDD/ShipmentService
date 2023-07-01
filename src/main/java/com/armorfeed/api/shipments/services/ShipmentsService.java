@@ -5,6 +5,7 @@ import com.armorfeed.api.shipments.domain.enums.ShipmentStatus;
 import com.armorfeed.api.shipments.providers.feignclients.UsersServiceFeignClient;
 import com.armorfeed.api.shipments.providers.feignclients.VehiclesServiceFeignClient;
 import com.armorfeed.api.shipments.repositories.ShipmentRepository;
+import com.armorfeed.api.shipments.resources.CreateShipmentResource;
 import com.armorfeed.api.shipments.resources.PatchShipmentVehicleIdResource;
 import com.armorfeed.api.shipments.resources.UpdateShipmentResource;
 import com.armorfeed.api.shipments.security.FeignRequestInterceptor;
@@ -38,7 +39,7 @@ public class ShipmentsService {
     @Autowired
     VehiclesServiceFeignClient vehiclesServiceFeignClient;
 
-    public ResponseEntity<?> save(Shipment shipment) {
+    public ResponseEntity<?> save(CreateShipmentResource shipment) {
         List<String> errors = new LinkedList<>();
         if(usersServiceFeignClient.validateCustomerId(shipment.getCustomerId()) == false) {
             errors.add("Customer with id " + shipment.getCustomerId() + " does not exist");
@@ -51,9 +52,10 @@ public class ShipmentsService {
         if(errors.isEmpty() == false) {
             return ResponseEntity.badRequest().body(errors);
         }
-        Shipment newShipment = shipmentRepository.save(shipment);
+        Shipment newShipment = enhancedModelMapper.map(shipment, Shipment.class);
+        Shipment result = shipmentRepository.save(newShipment);
         log.info("New shipment was successfully created");
-        return ResponseEntity.ok().body(newShipment);
+        return ResponseEntity.ok().body(result);
     }
 
     public List<Shipment> getShipmentsByUsersEnterpriseId(Long users_enterprise_id){
